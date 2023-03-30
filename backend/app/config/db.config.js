@@ -1,7 +1,7 @@
 module.exports = {
   HOST: "localhost",
   USER: "root",
-  PASSWORD: "idojava4", //password on ubuntu system
+  PASSWORD: "password", //password on ubuntu system, idojava4 on local
   DB: "testdb",
   dialect: "mysql",
   pool: {
