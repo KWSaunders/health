@@ -318,6 +318,7 @@ export default function Session() {
     const [sets, setSets] = useState([]);
     const [progress, setProgress] = useState(new Map());
     const [workoutId, setWorkoutId] = useState(null);
+    const [name, setName] = useState('');
     const [workout, setWorkout] = useState(null);
 
     const update = () => {
@@ -346,6 +347,9 @@ export default function Session() {
                 const id = tmp % workouts.length;
                 const workout = workouts[id];
 
+                setName(workout.name);
+                // console.log('name: ' + name);
+
                 const map = new Map();
 
                 // initialize all exercises to 0
@@ -355,7 +359,7 @@ export default function Session() {
 
                 // update progress for each exercise
                 for (let i = 0; i < sets.length; i++) {
-                    let exercise = sets[i].exercise;
+                    let exercise = sets[i].name;
                     let progress = map.get(exercise);
                     map.set(exercise, progress + 1);
                 }
@@ -376,7 +380,11 @@ export default function Session() {
         <div>
             <Workout workout={workouts[workoutId % workouts.length]} update={update} progress={progress} />
             <Log sets={sets} />
-            <Complete update={update} />
+            <Complete update={update} name={name} />
         </div>
     );
 }
+
+// createdAt
+// OAUTH
+// youtube links

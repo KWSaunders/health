@@ -14,8 +14,7 @@ exports.signup = (req, res) => {
     username: req.body.username,
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8),
-    workoutDayId: 0,
-    workouts: []
+    workoutId: 0,
   })
     .then(user => {
       if (req.body.roles) {
@@ -78,7 +77,7 @@ exports.signin = (req, res) => {
           id: user.id,
           username: user.username,
           email: user.email,
-          workoutDayId: user.workoutDayId,
+          workoutId: user.workoutId,
           // workouts: user.workouts,
           roles: authorities,
           accessToken: token

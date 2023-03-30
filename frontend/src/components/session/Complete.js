@@ -1,34 +1,43 @@
 import React from 'react';
 import SessionService from '../../services/session.service';
+import styled from 'styled-components';
 
-export default function Complete({ update }) {
+const Button = styled.button`
+background-color: red;
+color: white;
+font-size: 20px;
+padding: 10px 60px;
+border-radius: 5px;
+margin: 10px 0px;
+cursor: pointer;
+`;
 
-    // increment workoutId
-    // force re-render for Workout component
+export default function Complete({ update, name }) {
 
-    // render a Button component from material UI
-
-    // on click, call SessionService.complete()
+    const container = {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100px',
+        width: '100%',
+        // backgroundColor: 'lightblue',
+        // marginBottom: '20px',
+    }
 
     const handleClick = () => {
-        SessionService.complete().then(
+        SessionService.complete(name).then(
             response => {
                 update();
-                console.log(response.data);
                 alert(response.data);
             }
         );
-        // force a refresh or re-render on Session Component (Parent)
     };
 
-
-
     return (
-        <div>
-            <h1>Session Complete</h1>
-            <p>Great job! You've completed your workout.</p>
-            <p>Click the button below to save your session.</p>
-            <button onClick={handleClick}>Complete Session</button>
+        <div style={container}>
+            {/* <p>Click the button below to save your session.</p> */}
+            <Button onClick={handleClick}>Complete Session</Button>
         </div>
     );
 }

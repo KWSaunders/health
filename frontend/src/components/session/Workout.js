@@ -43,7 +43,7 @@ export default function Workout({ workout, update, progress }) {
                     </CardContent>
 
                     <CardActions>
-                        <div>Add Set <AddSet exercise={exercise.name} update={update} /></div>
+                        <div><AddSet exercise={exercise.name} update={update} /></div>
                         {/* <Button size="small">Learn More</Button> */}
                     </CardActions>
                 </Card>

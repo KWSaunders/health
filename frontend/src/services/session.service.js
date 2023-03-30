@@ -1,6 +1,7 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
+// const API_URL = 'http://ec2-35-165-169-154.us-west-2.compute.amazonaws.com:8080/api/session/';
 const API_URL = 'http://localhost:8080/api/session/';
 
 class SessionService {
@@ -19,8 +20,12 @@ class SessionService {
         return axios.get(API_URL + "sets", { headers: authHeader() });
     }
 
-    complete() {
-        return axios.get(API_URL + "complete", { headers: authHeader() });
+    getWorkouts() {
+        return axios.get(API_URL + "workouts", { headers: authHeader() });
+    }
+
+    complete(name) {
+        return axios.post(API_URL + "complete", { name }, { headers: authHeader() });
     }
 
     getWorkoutId() {

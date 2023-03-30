@@ -11,16 +11,21 @@ module.exports = function (app) {
     });
 
     // Add Set (POST)
-    app.post("/api/session/add", [authJwt.verifyToken], controller.addSet);
+    app.post("/api/session/add", [authJwt.verifyToken], controller.addSet2);
 
     // Get Sets (GET) -- for the given workoutDayId
-    app.get("/api/session/sets", [authJwt.verifyToken], controller.getSets);
+    app.get("/api/session/sets", [authJwt.verifyToken], controller.getSets2);
 
     app.put("/api/session/add", [authJwt.verifyToken], controller.complete);
 
+
+    // History
+
+    app.get("/api/session/workouts", [authJwt.verifyToken], controller.getWorkouts);
+
     // Complete session
 
-    app.get("/api/session/complete", [authJwt.verifyToken], controller.complete);
+    app.post("/api/session/complete", [authJwt.verifyToken], controller.complete);
 
     // Get workoutDayId
     app.get("/api/session/workoutId", [authJwt.verifyToken], controller.getWorkoutId);

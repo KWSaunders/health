@@ -1,26 +1,67 @@
-// we will need a workoutDayId to add a set to a workoutDay
 
 const db = require("../models");
 const User = db.user;
+const Set = db.set;
+const Workout = db.workout;
 
-// Add a set to current workout
-exports.addSet = (req, res) => {
+// addSet 2
+exports.addSet2 = (req, res) => {
     const weight = req.body.weight;
     const reps = req.body.reps;
     const exercise = req.body.exercise;
 
-    console.log("exercise: " + exercise);
-    console.log("weight: " + weight);
-    console.log("reps: " + reps);
-
-    // print the name of the user who added the set
-    console.log("userId: " + req.userId);
-    console.log("username: " + req.username);
-
-    // find user based on userId
     User.findOne({
         where: {
-            // username: req.body.username
+            id: req.userId
+        }
+    }).then(user => {
+        if (!user) {
+            return res.status(404).send({ message: "User Not found." });
+        }
+
+        console.log("Adding set for username: " + user.username);
+        Set.create({
+            userId: req.userId,
+            workoutId: user.workoutId,
+            name: exercise,
+            weight: weight,
+            reps: reps,
+        }).then(set => {
+            res.status(200).send("Set Added Successfully!");
+        }
+        ).catch(err => {
+            console.log("Error: " + err.message);
+            res.status(500).send({ message: err.message });
+        }
+        );
+    });
+};
+// getSets 2
+exports.getSets2 = (req, res) => {
+    User.findOne({
+        where: {
+            id: req.userId
+        }
+    }).then(user => {
+        if (!user) {
+            return res.status(404).send({ message: "User Not found." });
+        }
+        console.log("username: " + user.username);
+        const workoutId = user.workoutId;
+        Set.findAll({
+            where: {
+                userId: req.userId,
+                workoutId: workoutId
+            }
+        }).then(sets => {
+            res.status(200).send(sets ? sets : []);
+        });
+    });
+};
+
+exports.getWorkouts = (req, res) => {
+    User.findOne({
+        where: {
             id: req.userId
         }
     }).then(user => {
@@ -29,57 +70,37 @@ exports.addSet = (req, res) => {
         }
         console.log("username: " + user.username);
 
-        // this is the JSON structure prototype
-        // let temp2 = [
-        //     [{ a: 'bla', b: 12, c: 3 }, { a: 'idk', b: 3, c: 4 }, { a: 'idk', b: 8, c: 4 }], // workout 1
-        //     [{ a: 'asdfa', b: 12, c: 3 }, { a: 'fdf', b: 3, c: 4 }, { a: 'gdfg', b: 8, c: 4 }, { a: 'gfg', b: 12, c: 3 }, { a: 'idk', b: 3, c: 4 }, { a: 'fgf', b: 8, c: 4 }], // workout 2
-        //     [{ a: 'bla', b: 12, c: 3 }, { a: 'idk', b: 3, c: 4 }, { a: 'idk', b: 8, c: 4 }], // workout 3
-        //     [{ a: 'bla', b: 12, c: 3 }, { a: 'idk', b: 3, c: 4 }, { a: 'idk', b: 8, c: 4 }], // workout 4
-        // ];
+        Workout.findAll({
+            where: {
+                userId: req.userId,
+            }
+        }).then(workouts => {
+            // get all sets for each workout
+            Set.findAll({
+                where: {
+                    userId: req.userId,
+                }
+            }).then(sets => {
+                let workoutsCpy = [];
+                // add sets to each workout
+                workouts.forEach(workout => {
 
+                    let sts = sets.filter(set => set.workoutId === workout.workoutId);
+                    let wrkout = { id: workout.id, workoutId: workout.workoutId, createdAt: workout.createdAt, name: workout.name, sets: sts };
+                    workoutsCpy.push(wrkout);
+                });
 
-        // workouts is an array of workout and workout is an array of sets
-        const workoutId = user.workoutDayId;
-        const set = { exercise: exercise, weight: weight, reps: reps, date: new Date() };
+                console.log('SET: ' + JSON.stringify(workoutsCpy[0].sets));
 
-        let workouts = user.workouts;
-        let workout = workouts[workoutId] || [];
-        workout.push(set);
+                console.log('WORKOUTS!!!!');
+                console.log(JSON.stringify(workoutsCpy));
 
-        workouts[workoutId] = workout;
-        // workouts.push(workout);
-
-        console.log("temp: " + JSON.stringify(workouts));
-
-        user.workouts = workouts;
-        user.save();
-
-        console.log(JSON.stringify(user.workouts));
-
-        res.status(200).send("Set Added Successfully!");
-        // }).catch(err => {
-        //     res.status(500).send({ message: err.message });
+                res.status(200).send(workoutsCpy ? workoutsCpy : []);
+            })
+        });
     });
 };
 
-// Get all the sets for the given user
-exports.getSets = (req, res) => {
-    User.findOne({
-        where: {
-            // username: req.body.username
-            id: req.userId
-        }
-    }).then(user => {
-        if (!user) {
-            return res.status(404).send({ message: "User Not found." });
-        }
-        console.log("username: " + user.username);
-        const workouts = user.workouts;
-        const workoutId = user.workoutDayId;
-        const workout = workouts[workoutId];
-        res.status(200).send(workout ? workout : []);
-    });
-};
 
 exports.getWorkoutId = (req, res) => {
     User.findOne({
@@ -92,7 +113,7 @@ exports.getWorkoutId = (req, res) => {
             return res.status(404).send({ message: "User Not found." });
         }
         console.log("username: " + user.username);
-        const workoutId = user.workoutDayId;
+        const workoutId = user.workoutId;
         console.log('workout Id from db: ' + workoutId);
         res.status(200).send("" + workoutId);
     });
@@ -101,16 +122,25 @@ exports.getWorkoutId = (req, res) => {
 exports.complete = (req, res) => {
     User.findOne({
         where: {
-            // username: req.body.username
             id: req.userId
         }
     }).then(user => {
         if (!user) {
             return res.status(404).send({ message: "User Not found." });
         }
-        console.log("username: " + user.username);
-        user.workoutDayId = user.workoutDayId + 1;
-        user.save();
-        res.status(200).send("Workout Session Completed!");
+
+        Workout.create({
+            userId: req.userId,
+            workoutId: user.workoutId,
+            name: req.body.name,
+        }).then(workout => {
+            console.log("Workout created: " + workout);
+            user.workoutId = user.workoutId + 1;
+            user.save();
+            res.status(200).send("Workout Session Completed!");
+        }).catch(err => {
+            console.log("Error: " + err.message);
+            res.status(500).send({ message: err.message });
+        });
     });
 }
