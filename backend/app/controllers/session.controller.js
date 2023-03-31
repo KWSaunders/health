@@ -90,7 +90,7 @@ exports.getWorkouts = (req, res) => {
                     workoutsCpy.push(wrkout);
                 });
 
-                console.log('SET: ' + JSON.stringify(workoutsCpy[0].sets));
+                // console.log('SET: ' + JSON.stringify(workoutsCpy[0].sets));
 
                 console.log('WORKOUTS!!!!');
                 console.log(JSON.stringify(workoutsCpy));
