@@ -1,7 +1,7 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-// const API_URL = 'http://ec2-35-165-169-154.us-west-2.compute.amazonaws.com:8080/api/test/';
+// const API_URL = 'http://100.20.33.186:8080/api/test/';
 const API_URL = 'http://localhost:8080/api/test/';
 
 class UserService {
