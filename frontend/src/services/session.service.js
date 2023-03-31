@@ -1,8 +1,8 @@
 import axios from 'axios';
 import authHeader from './auth-header';
 
-// const API_URL = 'http://100.20.33.186:8080/api/session/';
-const API_URL = 'http://localhost:8080/api/session/';
+const API_URL = 'http://100.20.33.186:8080/api/session/';
+// const API_URL = 'http://localhost:8080/api/session/';
 
 class SessionService {
 
